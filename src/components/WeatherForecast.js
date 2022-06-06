@@ -1,10 +1,14 @@
+import { useEffect, useState } from 'react';
+import { Table } from 'react-bootstrap';
+import axios from 'axios';
+
 import './../App.css';
-import React, {useEffect, useState} from "react";
-import { Table } from "react-bootstrap";
-import axios from "axios";
+import Search from './Search';
 
 const WeatherForecast = (props) => {
     const {
+        favouriteCity,
+        setFavouriteCity,
         currentPlace,
         setCurrentPlace,
         baseUrl,
@@ -13,93 +17,80 @@ const WeatherForecast = (props) => {
         setUnit,
         mode,
         setMode,
-        country,
-        setCountry,
+        city,
+        setCity,
         errorNoCountry,
-        setErrorNoCountry
+        setErrorNoCountry,
+        favourite,
+        setFavourite,
+        epochTimeToDate,
+        rise,
+        set
     } = props
 
-    const [rise, setRise] = useState('');
-    const [set, setSet] = useState('');
+    useEffect(() => {
+        if (favouriteCity !== '') {
+            axios.get(`${baseUrl}?&units=${unit}&q=${favouriteCity}&appid=${appKey}`)
+                 .then(res => {
+                    setCurrentPlace(res.data)
+                    setErrorNoCountry('')
+                    epochTimeToDate();
+                 })
+                 .catch(err => { setErrorNoCountry('Sorry, no such a country or city') });
+        } else {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&appid=${appKey}`)
+                     .then(res => {
+                        setCurrentPlace(res.data)
+                     })
+                     .catch(e => {
+                        console.log(e);
+                     });
+            });
+        }
+       setFavouriteCity('');
+    }, []);
 
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&appid=${appKey}`)
-                 .then(res => {
-                     setCurrentPlace(res.data)
-                     epochTimeToDate(currentPlace.sys.sunrise, currentPlace.sys.sunset);
-                 })
-                 .catch(e => {
-                     console.log(e);
-                     // TODO: show error
-                 });
-        });
-    }, [unit]);
+        if (Object.keys(currentPlace).length) {
+            epochTimeToDate();
+        }
+    }, [unit, currentPlace])
 
-    const epochTimeToDate = (sunrise, sunset) => {
-        const date = new Date(sunrise * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
-        setRise(hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2))
 
-        const date1 = new Date(sunset * 1000);
-        const minutes1 = "0" + date1.getMinutes();
-        const hours1 = date1.getHours();
-        const seconds1 = "0" + date1.getSeconds();
-        setSet(hours1 + ':' + minutes1.substr(-2) + ':' + seconds1.substr(-2))
-    }
-
-    const changeToFahrenheit = () => {
-        setUnit('imperial');
-        setMode('°F');
-    };
-
-    const changeToCelsius = () => {
-        setUnit('metric')
-        setMode('°C')
+    const changeMetricSystem = () => {
+        if (unit === 'metric') {
+            setUnit('imperial');
+            setMode('°F');
+        } else {
+            setUnit('metric')
+            setMode('°C')
+        }
     };
 
     const handleChangeSearchInput = ({ target }) => {
-        setCountry(target.value);
+        setCity(target.value);
     }
-
-    const searchCountry = () => {
-        axios.get(`${baseUrl}?&units=${unit}&q=${country}&appid=${appKey}`)
-             .then(res => {
-                setCurrentPlace(res.data)
-                setErrorNoCountry('')
-                epochTimeToDate(currentPlace.sys.sunrise, currentPlace.sys.sunset);
-             })
-             .catch(err => { setErrorNoCountry('Sorry, no such a country') });
-    }
-
 
     return (
         <>
             {Object.keys(currentPlace).length ? (
                 <div className="container WeatherForecast">
-                    <div className="row my-5">
-                        <div className="col-md-2">
-                            <input
-                                className="form-control search-country"
-                                type="text"
-                                onChange={handleChangeSearchInput}
-                                placeholder="Type a country"
-                            />
-                        </div>
-                        <div className="col-md-2">
-                            <button
-                                className="btn btn-primary"
-                                onClick={() =>  searchCountry()}
-                            >
-                                Search
-                            </button>
-                        </div>
-                        <div className="col-md-4 err-country-text text-danger">
-                            <h4>{ errorNoCountry ? errorNoCountry : '' }</h4>
-                        </div>
-                    </div>
+                    <Search
+                        favourite={favourite}
+                        setFavourite={setFavourite}
+                        baseUrl={baseUrl}
+                        city={city}
+                        appKey={appKey}
+                        unit={unit}
+                        setCurrentPlace={setCurrentPlace}
+                        errorNoCountry={errorNoCountry}
+                        setErrorNoCountry={setErrorNoCountry}
+                        epochTimeToDate={epochTimeToDate}
+                        currentPlace={currentPlace}
+                        handleChangeSearchInput={handleChangeSearchInput}
+                    />
+
                     <div className="row my-5">
                         <div className="col-md-6">
                             <h1>Main data</h1>
@@ -115,17 +106,10 @@ const WeatherForecast = (props) => {
                             </h4>
 
                             <button
-                                className="m-2 btn btn-primary"
-                                onClick={() => changeToFahrenheit()}
+                                className="btn btn-primary"
+                                onClick={() => changeMetricSystem()}
                             >
-                                Fahrenheit
-                            </button>
-
-                            <button
-                                className="m-2 btn btn-primary"
-                                onClick={() => changeToCelsius()}
-                            >
-                                Celsius
+                                { unit === 'metric' ? 'Fahrenheit' : 'Celsius' }
                             </button>
                         </div>
                         <div className="col-md-6">
@@ -182,7 +166,17 @@ const WeatherForecast = (props) => {
                     </div>
                 </div>
             ) : (
-                <div>No Data...</div>
+                <div className="loading">
+                    <div className="spinner-grow text-primary" role="status"></div>
+                    <div className="spinner-grow text-secondary" role="status"></div>
+                    <div className="spinner-grow text-success" role="status"></div>
+                    <div className="spinner-grow text-danger" role="status"></div>
+                    <div className="spinner-grow text-warning" role="status"></div>
+                    <div className="spinner-grow text-info" role="status"></div>
+                    <div className="spinner-grow text-light" role="status"></div>
+                    <div className="spinner-grow text-dark" role="status"></div>
+                    <span className="sr-only mx-4">Loading...</span>
+                </div>
             )}
         </>
     );

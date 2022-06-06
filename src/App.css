@@ -12,3 +12,9 @@
     justify-content: left;
     align-items: center;
 }
+
+.loading {
+    text-align: center;
+    font-size: 48px;
+    margin-top: 30%;
+}
