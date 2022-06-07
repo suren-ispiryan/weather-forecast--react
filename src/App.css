@@ -29,6 +29,6 @@
     border: 1px black solid;
     box-shadow: 1px 1px 5px black;
     border-radius: 5px;
-    height: 200px;
-    min-width: 200px;
+    min-height: 200px;
+    min-width: 15.6%;
 }
