@@ -97,3 +97,5 @@ const FavoriteCityList = (props) => {
 }
 
 export default FavoriteCityList;
+
+// axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&include=hourly&appid=${appKey}`)

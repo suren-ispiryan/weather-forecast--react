@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import axios from 'axios';
 
 import './../App.css';
 import Search from './Search';
+import HourlyForecast from './HourlyForecast';
 
 const WeatherForecast = (props) => {
     const {
@@ -57,7 +58,6 @@ const WeatherForecast = (props) => {
         }
     }, [unit, currentPlace])
 
-
     const changeMetricSystem = () => {
         if (unit === 'metric') {
             setUnit('imperial');
@@ -99,7 +99,7 @@ const WeatherForecast = (props) => {
                                 { currentPlace.name }, { currentPlace.sys.country }
                             </h2>
                             <h4 className="text-success">
-                                Now { currentPlace.main.temp } { mode }
+                                Now { Math.round(currentPlace.main.temp) } { mode }
                             </h4>
                             <h4 className="text-success">
                                 Feels like { Math.round(currentPlace.main.feels_like) } { mode }
@@ -163,6 +163,14 @@ const WeatherForecast = (props) => {
                                 </tbody>
                             </Table>
                         </div>
+
+                        <HourlyForecast
+                            currentPlace={currentPlace}
+                            appKey={appKey}
+                            unit={unit}
+                            mode={mode}
+                        />
+
                     </div>
                 </div>
             ) : (

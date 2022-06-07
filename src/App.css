@@ -18,3 +18,17 @@
     font-size: 48px;
     margin-top: 30%;
 }
+
+.hourly-forecast-parent {
+    text-align: center;
+    overflow-x: scroll;
+    display: flex;
+}
+
+.hourly-forecast-children {
+    border: 1px black solid;
+    box-shadow: 1px 1px 5px black;
+    border-radius: 5px;
+    height: 200px;
+    min-width: 200px;
+}
