@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -31,4 +32,17 @@
     border-radius: 5px;
     min-height: 200px;
     min-width: 15.6%;
+}
+
+.days-parent {
+    padding: 20px 0 0 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.days-weather {
+    padding: 5px;
+    text-align: center;
+    border: 1px black solid;
+    border-radius: 5px;
 }

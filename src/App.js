@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
-import WeatherForecast from "./components/WeatherForecast";
-import FavoriteCityList from "./components/FavoriteCityList";
+import WeatherForecast from './components/WeatherForecast';
+import FavoriteCityList from './components/FavoriteCityList';
+import ShowFor5Days from './components/ShowFor5Days';
 import './App.css';
+import axios from "axios";
 
+const baseHourly = 'https://api.openweathermap.org/data/2.5/onecall';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 const appKey = '166c77d2359e1542961c47c2cabb4d82';
 
@@ -17,6 +20,39 @@ const App = () => {
     const [rise, setRise] = useState('');
     const [set, setSet] = useState('');
     const [favouriteCity, setFavouriteCity] = useState('');
+
+    useEffect(() => {
+        if (favouriteCity !== '') {
+            axios.get(`${baseUrl}?&units=${unit}&q=${favouriteCity}&appid=${appKey}`)
+                .then(res => {
+                    setCurrentPlace(res.data)
+                    setErrorNoCountry('')
+                    epochTimeToDate();
+                })
+                .catch(err => { setErrorNoCountry('Sorry, no such a country or city') });
+        } else {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&appid=${appKey}`)
+                    .then(res => {
+                        setCurrentPlace(res.data)
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            });
+        }
+        setFavouriteCity('');
+    }, [unit]);
+
+    const changeMetricSystem = () => {
+        if (unit === 'metric') {
+            setUnit('imperial');
+            setMode('°F');
+        } else {
+            setUnit('metric')
+            setMode('°C')
+        }
+    };
 
     const epochTimeToDate = () => {
         const date = new Date(currentPlace.sys.sunrise * 1000);
@@ -40,13 +76,19 @@ const App = () => {
                         <ul className="navbar-nav">
                             <li className="nav-item active">
                                 <span className="sr-only">
-                                    <Link to="/" className="nav-link text-light">Forecast</Link>
+                                    <Link to="/" className="nav-link text-light">| Forecast</Link>
                                 </span>
                             </li>
 
                             <li className="nav-item active">
                                 <span className="sr-only">
-                                    <Link to="/favorite" className="nav-link text-light">Favourites</Link>
+                                    <Link to="/favorite" className="nav-link text-light">| Favourites</Link>
+                                </span>
+                            </li>
+
+                            <li className="nav-item active">
+                                <span className="sr-only">
+                                    <Link to="/5/days" className="nav-link text-light">| Show weather for 5 days</Link>
                                 </span>
                             </li>
                         </ul>
@@ -58,8 +100,8 @@ const App = () => {
                         path="/"
                         element={
                             <WeatherForecast
-                                favouriteCity={favouriteCity}
-                                setFavouriteCity={setFavouriteCity}
+                                changeMetricSystem={changeMetricSystem}
+                                baseHourly={baseHourly}
                                 rise={rise}
                                 set={set}
                                 favourite={favourite}
@@ -69,9 +111,7 @@ const App = () => {
                                 baseUrl={baseUrl}
                                 appKey={appKey}
                                 unit={unit}
-                                setUnit={setUnit}
                                 mode={mode}
-                                setMode={setMode}
                                 city={city}
                                 setCity={setCity}
                                 errorNoCountry={errorNoCountry}
@@ -92,6 +132,19 @@ const App = () => {
                                 unit={unit}
                                 setCurrentPlace={setCurrentPlace}
                                 setErrorNoCountry={setErrorNoCountry}
+                                epochTimeToDate={epochTimeToDate}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/5/days"
+                        element={
+                            <ShowFor5Days
+                                changeMetricSystem={changeMetricSystem}
+                                currentPlace={currentPlace}
+                                appKey={appKey}
+                                unit={unit}
+                                mode={mode}
                                 epochTimeToDate={epochTimeToDate}
                             />
                         }

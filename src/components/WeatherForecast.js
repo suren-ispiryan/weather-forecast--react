@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
-import axios from 'axios';
 
 import './../App.css';
 import Search from './Search';
@@ -8,16 +7,13 @@ import HourlyForecast from './HourlyForecast';
 
 const WeatherForecast = (props) => {
     const {
-        favouriteCity,
-        setFavouriteCity,
+        changeMetricSystem,
         currentPlace,
         setCurrentPlace,
         baseUrl,
         appKey,
         unit,
-        setUnit,
         mode,
-        setMode,
         city,
         setCity,
         errorNoCountry,
@@ -26,47 +22,15 @@ const WeatherForecast = (props) => {
         setFavourite,
         epochTimeToDate,
         rise,
-        set
+        set,
+        baseHourly
     } = props
-
-    useEffect(() => {
-        if (favouriteCity !== '') {
-            axios.get(`${baseUrl}?&units=${unit}&q=${favouriteCity}&appid=${appKey}`)
-                 .then(res => {
-                    setCurrentPlace(res.data)
-                    setErrorNoCountry('')
-                    epochTimeToDate();
-                 })
-                 .catch(err => { setErrorNoCountry('Sorry, no such a country or city') });
-        } else {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&appid=${appKey}`)
-                     .then(res => {
-                        setCurrentPlace(res.data)
-                     })
-                     .catch(e => {
-                        console.log(e);
-                     });
-            });
-        }
-       setFavouriteCity('');
-    }, []);
 
     useEffect(() => {
         if (Object.keys(currentPlace).length) {
             epochTimeToDate();
         }
     }, [unit, currentPlace])
-
-    const changeMetricSystem = () => {
-        if (unit === 'metric') {
-            setUnit('imperial');
-            setMode('°F');
-        } else {
-            setUnit('metric')
-            setMode('°C')
-        }
-    };
 
     const handleChangeSearchInput = ({ target }) => {
         setCity(target.value);
@@ -165,6 +129,7 @@ const WeatherForecast = (props) => {
                         </div>
 
                         <HourlyForecast
+                            baseHourly={baseHourly}
                             currentPlace={currentPlace}
                             appKey={appKey}
                             unit={unit}
@@ -175,14 +140,14 @@ const WeatherForecast = (props) => {
                 </div>
             ) : (
                 <div className="loading">
-                    <div className="spinner-grow text-primary" role="status"></div>
-                    <div className="spinner-grow text-secondary" role="status"></div>
-                    <div className="spinner-grow text-success" role="status"></div>
-                    <div className="spinner-grow text-danger" role="status"></div>
-                    <div className="spinner-grow text-warning" role="status"></div>
-                    <div className="spinner-grow text-info" role="status"></div>
-                    <div className="spinner-grow text-light" role="status"></div>
-                    <div className="spinner-grow text-dark" role="status"></div>
+                    <div className="spinner-grow text-primary" role="status" />
+                    <div className="spinner-grow text-secondary" role="status" />
+                    <div className="spinner-grow text-success" role="status" />
+                    <div className="spinner-grow text-danger" role="status" />
+                    <div className="spinner-grow text-warning" role="status" />
+                    <div className="spinner-grow text-info" role="status" />
+                    <div className="spinner-grow text-light" role="status" />
+                    <div className="spinner-grow text-dark" role="status" />
                     <span className="sr-only mx-4">Loading...</span>
                 </div>
             )}

@@ -11,19 +11,20 @@ const HourlyForecast = (props) => {
         appKey,
         unit,
         mode,
+        baseHourly
     } = props
 
     const [currentPlaceHourly, setCurrentPlaceHourly] = useState({});
 
     useEffect(() => {
-        axios.get(`${baseHourly}?lat=${currentPlace.coord.lat}&lon=${currentPlace.coord.lon}&units=${unit}&exclude=hourlyy&appid=${appKey}`)
+       axios.get(`${baseHourly}?lat=${currentPlace.coord.lat}&lon=${currentPlace.coord.lon}&units=${unit}&cnt=5&include=hourlyy&appid=${appKey}`)
              .then(res => {
                  setCurrentPlaceHourly(res.data)
              })
              .catch(e => {
                  console.log(e);
              });
-    }, [currentPlace]);
+    }, [unit, currentPlace]);
 
     const epochTimeToHour =(h) => {
         const date = new Date(h * 1000);
@@ -73,14 +74,14 @@ const HourlyForecast = (props) => {
                             )
                             : (
                                 <div className="loading">
-                                    <div className="spinner-grow text-primary" role="status"></div>
-                                    <div className="spinner-grow text-secondary" role="status"></div>
-                                    <div className="spinner-grow text-success" role="status"></div>
-                                    <div className="spinner-grow text-danger" role="status"></div>
-                                    <div className="spinner-grow text-warning" role="status"></div>
-                                    <div className="spinner-grow text-info" role="status"></div>
-                                    <div className="spinner-grow text-light" role="status"></div>
-                                    <div className="spinner-grow text-dark" role="status"></div>
+                                    <div className="spinner-grow text-primary" role="status" />
+                                    <div className="spinner-grow text-secondary" role="status" />
+                                    <div className="spinner-grow text-success" role="status" />
+                                    <div className="spinner-grow text-danger" role="status" />
+                                    <div className="spinner-grow text-warning" role="status" />
+                                    <div className="spinner-grow text-info" role="status" />
+                                    <div className="spinner-grow text-light" role="status" />
+                                    <div className="spinner-grow text-dark" role="status" />
                                     <span className="sr-only mx-4">Loading...</span>
                                 </div>
                             )
