@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Link, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Link, Route } from 'react-router-dom';
 import WeatherForecast from './components/WeatherForecast';
 import FavoriteCityList from './components/FavoriteCityList';
 import ShowFor5Days from './components/ShowFor5Days';
+import axios from 'axios';
 import './App.css';
-import axios from "axios";
 
-const baseHourly = 'https://api.openweathermap.org/data/2.5/onecall';
+const baseHourlyUrl = 'https://api.openweathermap.org/data/2.5/onecall';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
-const appKey = '03dba9cb17042d9cd20c6e5a7977e4f8';
+const base5DaysUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+const appKey = 'a8d6c74d40d47c4f2690d0c7156f3d96';
 
 const App = () => {
     const [currentPlace, setCurrentPlace] = useState({});
@@ -41,7 +42,6 @@ const App = () => {
                     });
             });
         }
-        // setFavouriteCity('');
     }, [unit]);
 
     const changeMetricSystem = () => {
@@ -55,6 +55,7 @@ const App = () => {
     };
 
     const epochTimeToDate = () => {
+        // TODO: use moment.js
         const date = new Date(currentPlace.sys.sunrise * 1000);
         const hours = date.getHours();
         const minutes = "0" + date.getMinutes();
@@ -71,37 +72,41 @@ const App = () => {
     return (
         <>
             <BrowserRouter>
+                {/* TODO: move to separate component, named header */}
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <div className="collapse navbar-collapse container " id="navbarNav">
+                    <div className="collapse navbar-collapse container" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item active">
                                 <span className="sr-only">
-                                    <Link to="/" className="nav-link text-light">| Forecast</Link>
+                                    <Link to="/" className="nav-link text-light">
+                                        | Forecast
+                                    </Link>
                                 </span>
                             </li>
-
                             <li className="nav-item active">
                                 <span className="sr-only">
-                                    <Link to="/favorite" className="nav-link text-light">| Favourites</Link>
+                                    <Link to="/favorite" className="nav-link text-light">
+                                        | Favourites
+                                    </Link>
                                 </span>
                             </li>
-
                             <li className="nav-item active">
                                 <span className="sr-only">
-                                    <Link to="/5/days" className="nav-link text-light">| Show weather for 5 days</Link>
+                                    <Link to="/5/days" className="nav-link text-light">
+                                        | Show weather for 5 days
+                                    </Link>
                                 </span>
                             </li>
                         </ul>
                     </div>
                 </nav>
-
                 <Routes>
                     <Route
                         path="/"
                         element={
                             <WeatherForecast
                                 changeMetricSystem={changeMetricSystem}
-                                baseHourly={baseHourly}
+                                baseHourlyUrl={baseHourlyUrl}
                                 rise={rise}
                                 set={set}
                                 favourite={favourite}
@@ -140,6 +145,8 @@ const App = () => {
                         path="/5/days"
                         element={
                             <ShowFor5Days
+                                base5DaysUrl={base5DaysUrl}
+                                baseHourlyUrl={baseHourlyUrl}
                                 changeMetricSystem={changeMetricSystem}
                                 currentPlace={currentPlace}
                                 appKey={appKey}

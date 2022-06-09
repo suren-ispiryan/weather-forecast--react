@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
-
-import './../App.css';
 import Search from './Search';
 import HourlyForecast from './HourlyForecast';
+import LoadingSpinner from './LoadingSpinner';
 
 const WeatherForecast = (props) => {
     const {
@@ -23,7 +22,7 @@ const WeatherForecast = (props) => {
         epochTimeToDate,
         rise,
         set,
-        baseHourly
+        baseHourlyUrl
     } = props
 
     useEffect(() => {
@@ -39,7 +38,7 @@ const WeatherForecast = (props) => {
     return (
         <>
             {Object.keys(currentPlace).length ? (
-                <div className="container WeatherForecast">
+                <div className="container">
                     <Search
                         favourite={favourite}
                         setFavourite={setFavourite}
@@ -54,11 +53,10 @@ const WeatherForecast = (props) => {
                         currentPlace={currentPlace}
                         handleChangeSearchInput={handleChangeSearchInput}
                     />
-
                     <div className="row my-5">
                         <div className="col-md-6">
                             <h1>Main data</h1>
-                            <hr/>
+                            <hr />
                             <h2 className="text-success">
                                 { currentPlace.name }, { currentPlace.sys.country }
                             </h2>
@@ -68,7 +66,6 @@ const WeatherForecast = (props) => {
                             <h4 className="text-success">
                                 Feels like { Math.round(currentPlace.main.feels_like) } { mode }
                             </h4>
-
                             <button
                                 className="btn btn-primary"
                                 onClick={() => changeMetricSystem()}
@@ -78,7 +75,7 @@ const WeatherForecast = (props) => {
                         </div>
                         <div className="col-md-6">
                             <h1>Details</h1>
-                            <hr/>
+                            <hr />
                             <Table striped bordered hover size="md table">
                                 <tbody>
                                 <tr>
@@ -127,29 +124,17 @@ const WeatherForecast = (props) => {
                                 </tbody>
                             </Table>
                         </div>
-
                         <HourlyForecast
-                            baseHourly={baseHourly}
+                            baseHourlyUrl={baseHourlyUrl}
                             currentPlace={currentPlace}
                             appKey={appKey}
                             unit={unit}
                             mode={mode}
                         />
-
                     </div>
                 </div>
             ) : (
-                <div className="loading">
-                    <div className="spinner-grow text-primary" role="status" />
-                    <div className="spinner-grow text-secondary" role="status" />
-                    <div className="spinner-grow text-success" role="status" />
-                    <div className="spinner-grow text-danger" role="status" />
-                    <div className="spinner-grow text-warning" role="status" />
-                    <div className="spinner-grow text-info" role="status" />
-                    <div className="spinner-grow text-light" role="status" />
-                    <div className="spinner-grow text-dark" role="status" />
-                    <span className="sr-only mx-4">Loading...</span>
-                </div>
+                <LoadingSpinner />
             )}
         </>
     );

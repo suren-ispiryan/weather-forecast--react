@@ -1,7 +1,7 @@
+import { Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
-import axios from "axios";
-import { Link } from "react-router-dom";
-import './../App.css';
+import axios from 'axios';
+import LoadingSpinner from './LoadingSpinner';
 
 const FavoriteCityList = (props) => {
     const {
@@ -24,8 +24,9 @@ const FavoriteCityList = (props) => {
                 setCurrentPlace(res.data)
                 setErrorNoCountry('')
                 epochTimeToDate();
-            })
-            .catch(err => { setErrorNoCountry('Sorry, no such a country or city') });
+            }).catch(() => {
+                setErrorNoCountry('Sorry, no such a country or city')
+            });
     }
 
     const deleteCity = (cityId) => {
@@ -37,8 +38,7 @@ const FavoriteCityList = (props) => {
 
     return (
         <div className="FavoriteCityList container my-5">
-            { favourite.length > 0
-            ?
+            {favourite.length ?
                 <Table striped bordered hover>
                     <thead>
                     <tr>
@@ -49,47 +49,35 @@ const FavoriteCityList = (props) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {
-                        favourite.map((city, index) =>
-                            <tr key={city.id}>
-                                <td>{index + 1}</td>
-                                <td>{city.city}</td>
-                                <td>
-                                    <Link to="/">
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={ () => showWeather(city.city) }
-                                        >
-                                            Show weather
-                                        </button>
-                                    </Link>
-                                </td>
-                                <td>
+                    {favourite.map((city, index) =>
+                        <tr key={city.id}>
+                            <td>{index + 1}</td>
+                            <td>{city.city}</td>
+                            <td>
+                                <Link to="/">
                                     <button
-                                        className="btn btn-danger"
-                                        onClick={ () => deleteCity(city.id) }
+                                        className="btn btn-primary"
+                                        onClick={() => showWeather(city.city)}
                                     >
-                                        Delete
+                                        Show weather
                                     </button>
-                                </td>
-                            </tr>
-                        )
-                    }
+                                </Link>
+                            </td>
+                            <td>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={ () => deleteCity(city.id) }
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    )}
                     </tbody>
                 </Table>
-            :
+                :
                 <h1 className="text-danger">
-                    <div className="loading">
-                        <div className="spinner-grow text-primary" role="status" />
-                        <div className="spinner-grow text-secondary" role="status" />
-                        <div className="spinner-grow text-success" role="status" />
-                        <div className="spinner-grow text-danger" role="status" />
-                        <div className="spinner-grow text-warning" role="status" />
-                        <div className="spinner-grow text-info" role="status" />
-                        <div className="spinner-grow text-light" role="status" />
-                        <div className="spinner-grow text-dark" role="status" />
-                        <span className="sr-only mx-4">Loading...</span>
-                    </div>
+                    <LoadingSpinner />
                 </h1>
             }
         </div>
