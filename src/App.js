@@ -8,7 +8,7 @@ import axios from "axios";
 
 const baseHourly = 'https://api.openweathermap.org/data/2.5/onecall';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
-const appKey = '166c77d2359e1542961c47c2cabb4d82';
+const appKey = '03dba9cb17042d9cd20c6e5a7977e4f8';
 
 const App = () => {
     const [currentPlace, setCurrentPlace] = useState({});
@@ -41,7 +41,7 @@ const App = () => {
                     });
             });
         }
-        setFavouriteCity('');
+        // setFavouriteCity('');
     }, [unit]);
 
     const changeMetricSystem = () => {

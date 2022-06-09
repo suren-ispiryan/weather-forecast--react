@@ -1,4 +1,3 @@
-
 .App {
   text-align: center;
 }
@@ -45,4 +44,23 @@
     text-align: center;
     border: 1px black solid;
     border-radius: 5px;
+}
+
+.weather-detailed-info {
+    cursor: pointer;
+    font-size: 18px;
+    background-color: aliceblue;
+    margin: 5px;
+    border: 1px lightslategray solid;
+    border-radius: 5px;
+}
+
+ol {
+    padding: 0 !important;
+}
+
+.details {
+    text-align: center;
+    font-size: 24px;
+    list-style-type: none;
 }
