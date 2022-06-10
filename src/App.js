@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Link, Route } from 'react-router-dom';
 import WeatherForecast from './components/WeatherForecast';
 import FavoriteCityList from './components/FavoriteCityList';
