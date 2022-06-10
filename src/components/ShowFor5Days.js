@@ -56,8 +56,8 @@ const ShowFor5Days = (props) => {
     const epochTimeToDate = (hour) => moment.unix(hour).format('DD-MM-YYYY');
 
     const cutMonthFromFullData = (dateTime1, dateTime2) => {
-        // return moment(moment.unix(dateTime2).format('DD-MM-YYYY')).isSame(moment(dateTime1).format('DD-MM-YYYY'));
-        return moment.unix(dateTime2).format('DD-MM-YYYY') === moment(dateTime1).format('DD-MM-YYYY')
+        // TODO: check moment isSame
+        return moment.unix(dateTime2).format('DD-MM-YYYY') === moment(dateTime1).format('DD-MM-YYYY') //works
     }
 
     const fromDateToHour = (dateTime) => {

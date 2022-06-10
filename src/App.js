@@ -11,7 +11,7 @@ import './App.css';
 const baseHourlyUrl = 'https://api.openweathermap.org/data/2.5/onecall';
 const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 const base5DaysUrl = 'https://api.openweathermap.org/data/2.5/forecast';
-const appKey = 'a8d6c74d40d47c4f2690d0c7156f3d96';
+const appKey = '9198cb0d23a984cfdf8cbdf9a6d55b64';
 
 const App = () => {
     const [currentPlace, setCurrentPlace] = useState({});
@@ -59,6 +59,7 @@ const App = () => {
     const epochTimeToDate = () => {
         // TODO: remove states and use one state
         setRise(moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'))
+        setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:s'))
         // setCurrentPlace({
         //     ...currentPlace,
         //     sys: {
@@ -67,7 +68,6 @@ const App = () => {
         //         sunset: moment.unix(currentPlace.sys.sunset).format('HH:mm:s')
         //     }
         // })
-        setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:s'))
     }
 
     return (
