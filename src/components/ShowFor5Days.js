@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Button, Modal} from 'react-bootstrap';
 import axios from 'axios';
+import moment from 'moment';
 import {v4 as uuidv4} from 'uuid';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -43,29 +44,25 @@ const ShowFor5Days = (props) => {
                             .then(res => {
                                 setData3Hours(res.data)
                             }).catch(e => {
-                            console.log('error 3', e)
+                            console.log('current city coordinates are not set', e)
                         })
                     }).catch(e => {
-                    console.log('error 4', e)
+                    console.log('current city coordinates are not set', e)
                 })
             })
         }
     }, [unit, currentPlace]);
 
-    const epochTimeToDate = (h) => {
-        const d = new Date(h * 1000);
-        return (
-                d.getFullYear()) + "-" +
-            ("00" + (d.getMonth() + 1)).slice(-2) + "-" +
-            ("00" + d.getDate()).slice(-2);
+    const epochTimeToDate = (hour) => moment.unix(hour).format('DD-MM-YYYY');
+
+    const cutMonthFromFullData = (dateTime1, dateTime2) => {
+        // return moment(moment.unix(dateTime2).format('DD-MM-YYYY')).isSame(moment(dateTime1).format('DD-MM-YYYY'));
+        return moment.unix(dateTime2).format('DD-MM-YYYY') === moment(dateTime1).format('DD-MM-YYYY')
     }
 
-    const cutMonthFromFullData = (fullData) => {
-        const monthData = fullData.slice(0, 10);
-        return (monthData);
+    const fromDateToHour = (dateTime) => {
+        return moment(dateTime).format('HH:mm:ss')
     }
-
-    const fromDateToHour = (d) => d.slice(10, 16);
 
     const handleClose = () => setShow(false);
 
@@ -73,6 +70,7 @@ const ShowFor5Days = (props) => {
         setShow(true);
         setDetailedData(e)
     }
+
     const drawDetailedData = () => {
         return (
             <Modal.Body>
@@ -110,7 +108,7 @@ const ShowFor5Days = (props) => {
         )
     }
 
-    const drawHoursList = (hour) => {
+    const renderHoursList = (hour) => {
         return (
             <div key={uuidv4()}>
                 <div onClick={() => handleShow(hour.main)} className="weather-detailed-info">
@@ -156,8 +154,8 @@ const ShowFor5Days = (props) => {
                                         <hr />
                                         {Object.keys(data3Hours).length ?
                                             (data3Hours.list.map((hour) => (
-                                                (cutMonthFromFullData(hour.dt_txt) === epochTimeToDate(day.dt) ?
-                                                        (drawHoursList(hour))
+                                                (cutMonthFromFullData(hour.dt_txt, day.dt) ?
+                                                        renderHoursList(hour)
                                                 : ''
                                                 )
                                             )))

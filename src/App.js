@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Link, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
+import moment from 'moment';
+import Navbar from './components/Navbar';
 import WeatherForecast from './components/WeatherForecast';
 import FavoriteCityList from './components/FavoriteCityList';
 import ShowFor5Days from './components/ShowFor5Days';
-import axios from 'axios';
 import './App.css';
 
 const baseHourlyUrl = 'https://api.openweathermap.org/data/2.5/onecall';
@@ -30,7 +32,7 @@ const App = () => {
                     setErrorNoCountry('')
                     epochTimeToDate();
                 })
-                .catch(err => { setErrorNoCountry('Sorry, no such a country or city') });
+                .catch(() => { setErrorNoCountry('Sorry, no such a country or city') });
         } else {
             navigator.geolocation.getCurrentPosition(function (position) {
                 axios.get(`${baseUrl}?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=${unit}&appid=${appKey}`)
@@ -55,51 +57,22 @@ const App = () => {
     };
 
     const epochTimeToDate = () => {
-        // TODO: use moment.js
-        const date = new Date(currentPlace.sys.sunrise * 1000);
-        const hours = date.getHours();
-        const minutes = "0" + date.getMinutes();
-        const seconds = "0" + date.getSeconds();
-        setRise(hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2))
-
-        const date1 = new Date(currentPlace.sys.sunset * 1000);
-        const minutes1 = "0" + date1.getMinutes();
-        const hours1 = date1.getHours();
-        const seconds1 = "0" + date1.getSeconds();
-        setSet(hours1 + ':' + minutes1.substr(-2) + ':' + seconds1.substr(-2))
+        // TODO: remove states and use one state
+        setRise(moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'))
+        // setCurrentPlace({
+        //     ...currentPlace,
+        //     sys: {
+        //         ...currentPlace.sys,
+        //         sunrise: moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'),
+        //         sunset: moment.unix(currentPlace.sys.sunset).format('HH:mm:s')
+        //     }
+        // })
+        setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:s'))
     }
 
     return (
-        <>
-            <BrowserRouter>
-                {/* TODO: move to separate component, named header */}
-                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <div className="collapse navbar-collapse container" id="navbarNav">
-                        <ul className="navbar-nav">
-                            <li className="nav-item active">
-                                <span className="sr-only">
-                                    <Link to="/" className="nav-link text-light">
-                                        | Forecast
-                                    </Link>
-                                </span>
-                            </li>
-                            <li className="nav-item active">
-                                <span className="sr-only">
-                                    <Link to="/favorite" className="nav-link text-light">
-                                        | Favourites
-                                    </Link>
-                                </span>
-                            </li>
-                            <li className="nav-item active">
-                                <span className="sr-only">
-                                    <Link to="/5/days" className="nav-link text-light">
-                                        | Show weather for 5 days
-                                    </Link>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+        <BrowserRouter>
+                <Navbar />
                 <Routes>
                     <Route
                         path="/"
@@ -158,7 +131,6 @@ const App = () => {
                     />
                 </Routes>
             </BrowserRouter>
-        </>
     );
 }
 
