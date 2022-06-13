@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import axios from 'axios';
@@ -16,6 +17,19 @@ const FavoriteCityList = (props) => {
         setFavouriteCity
     } = props;
 
+    // take and show from local storage
+    useEffect(() => {
+        let favourites = JSON.parse(localStorage.getItem('favourites'))
+        let favouriteItem = []
+        for (let i in favourites) {
+            favouriteItem.push(favourites[i])
+        }
+
+        setFavourite([
+            ...favouriteItem
+        ])
+    }, [setFavourite]);
+
     const showWeather = (city) => {
         setFavouriteCity(city)
         setErrorNoCountry('')
@@ -30,6 +44,17 @@ const FavoriteCityList = (props) => {
     }
 
     const deleteCity = (cityId) => {
+        let favourites = JSON.parse(localStorage.getItem('favourites'))
+        // delete from local storage
+        let favouriteItem = []
+        favourites.map((i) => {
+            if (i.id !== cityId) {
+                favouriteItem.push(i)
+            }
+            return favouriteItem
+        })
+        localStorage.setItem('favourites', JSON.stringify(favouriteItem))
+        // delete from state
         const removedFavourite = favourite.findIndex(i => i.id === cityId)
         const favouriteCopy = [...favourite]
         favouriteCopy.splice(removedFavourite, 1)

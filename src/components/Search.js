@@ -14,7 +14,7 @@ const Search = (props) => {
         epochTimeToDate,
         unit,
         favourite,
-        setFavourite
+        // setFavourite
     } = props
 
     const searchCountry = () => {
@@ -33,13 +33,26 @@ const Search = (props) => {
                 const repeatedCity = favourite.filter(i => i.city === city)
                 if (repeatedCity.length === 0) {
                     setErrorNoCountry('');
-                    setFavourite([
-                        ...favourite,
-                        {
-                            id: uuidv4(),
-                            city: city
+                    // Push favourite cities to local storage
+                    const fav = { id: uuidv4(), city: city }
+                    if (!localStorage.getItem('favourites')) {
+                        localStorage.setItem('favourites', JSON.stringify([fav]));
+                    } else {
+                        let favourites = JSON.parse(localStorage.getItem('favourites'));
+                        let favouriteItem = []
+                        for (let i in favourites) {
+                            favouriteItem.push(favourites[i])
                         }
-                    ])
+                        favouriteItem.push(fav);
+                        localStorage.setItem('favourites', JSON.stringify(favouriteItem));
+                    }
+                    // setFavourite([
+                    //     ...favourite,
+                    //     {
+                    //         id: uuidv4(),
+                    //         city: city
+                    //     }
+                    // ])
                 } else {
                     setErrorNoCountry('This city already exist');
                 }

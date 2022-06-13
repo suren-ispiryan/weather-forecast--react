@@ -57,17 +57,8 @@ const App = () => {
     };
 
     const epochTimeToDate = () => {
-        // TODO: remove states and use one state
         setRise(moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'))
         setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:s'))
-        // setCurrentPlace({
-        //     ...currentPlace,
-        //     sys: {
-        //         ...currentPlace.sys,
-        //         sunrise: moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'),
-        //         sunset: moment.unix(currentPlace.sys.sunset).format('HH:mm:s')
-        //     }
-        // })
     }
 
     return (
