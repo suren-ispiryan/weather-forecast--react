@@ -23,6 +23,7 @@ const App = () => {
     const [rise, setRise] = useState('');
     const [set, setSet] = useState('');
     const [favouriteCity, setFavouriteCity] = useState('');
+    const [details, setDetails] = useState([{}]);
 
     useEffect(() => {
         if (favouriteCity !== '') {
@@ -46,6 +47,74 @@ const App = () => {
         }
     }, [unit]);
 
+    useEffect(() => {
+        const data = []
+        if (Object.values(currentPlace).length) {
+            console.log('currentPlace', currentPlace)
+            for(const [key, value] of Object.entries(currentPlace)) {
+                switch (key) {
+                    case 'main':
+                        data.push({
+                            header: 'Per day',
+                            data: 'From '+value.temp_min+mode+' to '+value.temp_max+mode
+                        })
+                        data.push({
+                            header: 'Humidity',
+                            data: value.humidity+'%'
+                        })
+                        data.push({
+                            header: 'Pressure',
+                            data: value.pressure+'mb'
+                        })
+                        break;
+
+                    case 'coord':
+                        data.push({
+                            header: 'Coordinates',
+                            data:  'Latitude '+value.lat+'°'+' Longitude '+value.lon+'°'
+                        })
+                        break;
+
+                    case 'timezone':
+                        data.push({
+                            header: 'Timezone',
+                            data: 'GMT+'+value/3600
+                        })
+                        break;
+
+                    case 'sys':
+                        data.push({
+                            data: rise,
+                            header: 'Sunrise'
+                        })
+                        data.push({
+                            header: 'Sunset',
+                            data: set
+                        })
+                        break;
+
+                    case 'weather':
+                        data.push({
+                            header: 'Description',
+                            data: value[0].description
+                        })
+                        break;
+
+                    case 'wind':
+                        data.push({
+                            header: 'Wind',
+                            data: value.deg + 'deg ' + value.speed + ' km/h'
+                        })
+                        break;
+                }
+            }
+
+            console.log('data', data)
+            console.log('curent', currentPlace)
+            setDetails(data)
+        }
+    }, [currentPlace]);
+
     const changeMetricSystem = () => {
         if (unit === 'metric') {
             setUnit('imperial');
@@ -57,8 +126,8 @@ const App = () => {
     };
 
     const epochTimeToDate = () => {
-        setRise(moment.unix(currentPlace.sys.sunrise).format('HH:mm:s'))
-        setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:s'))
+        setRise(moment.unix(currentPlace.sys.sunrise).format('HH:mm:ss'))
+        setSet(moment.unix(currentPlace.sys.sunset).format('HH:mm:ss'))
     }
 
     return (
@@ -69,6 +138,7 @@ const App = () => {
                         path="/"
                         element={
                             <WeatherForecast
+                                details={details}
                                 changeMetricSystem={changeMetricSystem}
                                 baseHourlyUrl={baseHourlyUrl}
                                 rise={rise}

@@ -17,14 +17,13 @@ const FavoriteCityList = (props) => {
         setFavouriteCity
     } = props;
 
-    // take and show from local storage
     useEffect(() => {
+        // take favourite cities from local storage and out in state for showing to user
         let favourites = JSON.parse(localStorage.getItem('favourites'))
         let favouriteItem = []
         for (let i in favourites) {
             favouriteItem.push(favourites[i])
         }
-
         setFavourite([
             ...favouriteItem
         ])

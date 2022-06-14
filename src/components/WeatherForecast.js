@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Table } from 'react-bootstrap';
 import Search from './Search';
 import HourlyForecast from './HourlyForecast';
 import LoadingSpinner from './LoadingSpinner';
+import {v4 as uuidv4} from 'uuid';
 
 const WeatherForecast = (props) => {
     const {
@@ -22,7 +23,8 @@ const WeatherForecast = (props) => {
         epochTimeToDate,
         rise,
         set,
-        baseHourlyUrl
+        baseHourlyUrl,
+        details
     } = props
 
     useEffect(() => {
@@ -78,49 +80,12 @@ const WeatherForecast = (props) => {
                             <hr />
                             <Table striped bordered hover size="md table">
                                 <tbody>
-                                <tr>
-                                    <th>Per day</th>
-                                    <td>
-                                        min: { currentPlace.main.temp_min } { mode }<br />
-                                        max: { currentPlace.main.temp_max } { mode }
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Latitude</th>
-                                    <td>{ currentPlace.coord.lat }°</td>
-                                </tr>
-                                <tr>
-                                    <th>Longitude</th>
-                                    <td>{ currentPlace.coord.lon }°</td>
-                                </tr>
-                                <tr>
-                                    <th>Timezone</th>
-                                    <td>GMT+{ currentPlace.timezone / 3600}</td>
-                                </tr>
-                                <tr>
-                                    <th>Humidity</th>
-                                    <td>{ currentPlace.main.humidity }%</td>
-                                </tr>
-                                <tr>
-                                    <th>Pressure</th>
-                                    <td>{ currentPlace.main.pressure } mb</td>
-                                </tr>
-                                <tr>
-                                    <th>Sunrise</th>
-                                    <td>{ rise }</td>
-                                </tr>
-                                <tr>
-                                    <th>Sunset</th>
-                                    <td>{ set }</td>
-                                </tr>
-                                <tr>
-                                    <th>Description</th>
-                                    <td>{ currentPlace.weather[0].description }</td>
-                                </tr>
-                                <tr>
-                                    <th>Wind</th>
-                                    <td>{ currentPlace.wind.deg } deg, { currentPlace.wind.speed } km/h</td>
-                                </tr>
+                                    {details.map((i) => (
+                                        <tr key={uuidv4()}>
+                                            <th>{i.header}</th>
+                                            <td>{i.data}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </Table>
                         </div>
